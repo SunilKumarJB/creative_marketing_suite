@@ -1,0 +1,23 @@
+# Directories to ignore
+node_modules/
+dist/
+venv/
+.venv/
+env/
+__pycache__/
+.git/
+.github/
+.vscode/
+.idea/
+.gemini/
+.agents/
+
+# Files to ignore
+Dockerfile
+deploy_cloudrun.sh
+.dockerignore
+.gcloudignore
+.gitignore
+README.md
+*.py[cod]
+.DS_Store

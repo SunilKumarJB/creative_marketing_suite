@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cymbal Creative Suite - Architecture & Workflows</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styling for Slide Deck -->
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-slide: #1e293b;
+      --accent-gold: #c5a059;
+      --accent-gold-hover: #aa853c;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(197, 160, 89, 0.25);
+      --font-sans: 'Inter', sans-serif;
+      --font-heading: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    /* Presentation Header */
+    header {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.4);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-hover) 100%);
+      color: var(--bg-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: var(--font-heading);
+      font-size: 16px;
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .brand-title span {
+      color: var(--accent-gold);
+    }
+
+    .presentation-title {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Slides Container */
+    .slides-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 40px;
+      position: relative;
+    }
+
+    .slide {
+      background: var(--bg-slide);
+      width: 100%;
+      max-width: 1100px;
+      height: 80vh;
+      max-height: 650px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      padding: 40px;
+      display: none; /* Controlled by JS */
+      flex-direction: column;
+      justify-content: flex-start;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      display: flex;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide Title Card */
+    .slide-title-card {
+      text-align: center;
+      justify-content: center !important;
+      align-items: center;
+    }
+
+    .slide-title-card h1 {
+      font-family: var(--font-heading);
+      font-size: 42px;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .slide-title-card h1 span {
+      color: var(--accent-gold);
+    }
+
+    .slide-title-card p {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+    }
+
+    .slide-meta {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-gold);
+      margin-bottom: 24px;
+    }
+
+    .slide-header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 15px;
+    }
+
+    .slide-header h2 {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      color: var(--accent-gold);
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .slide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .text-column ul {
+      margin-left: 20px;
+      margin-top: 10px;
+      color: var(--text-muted);
+    }
+
+    .text-column li {
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .diagram-column {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      width: 100%;
+    }
+
+    /* Mermaid Rendering Tweaks */
+    .mermaid {
+      background: transparent !important;
+      font-family: var(--font-sans) !important;
+      width: 100%;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    th {
+      background: rgba(197, 160, 89, 0.1);
+      color: var(--accent-gold);
+      font-family: var(--font-heading);
+    }
+
+    td {
+      color: var(--text-muted);
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.07);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #f43f5e;
+      font-family: monospace;
+    }
+
+    /* Footer Navigation */
+    footer {
+      padding: 20px 40px;
+      background: rgba(30, 41, 59, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: rgba(197, 160, 89, 0.1);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--accent-gold);
+      color: var(--bg-dark);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .slide-counter {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+  </style>
+
+  <!-- Import Mermaid Library via CDN -->
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        background: '#0f172a',
+        primaryColor: '#c5a059',
+        primaryTextColor: '#f8fafc',
+        lineColor: '#c5a059',
+        nodeBorder: '#c5a059'
+      }
+    });
+  </script>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand-container">
+      <div class="logo-badge">C</div>
+      <div class="brand-title">CYMBAL <span>CREATIVE</span></div>
+    </div>
+    <div class="presentation-title">System Architecture & Workflows</div>
+  </header>
+
+  <!-- Slides Container -->
+  <div class="slides-container">
+
+    <!-- Slide 1: Cover -->
+    <div class="slide slide-title-card active">
+      <div class="slide-meta">Cymbal Brand Suite</div>
+      <h1>Cymbal Creative Marketing Suite</h1>
+      <p>AI-Powered Multi-Language Campaign Orchestration, Image Generation, and Style Cloning Architecture</p>
+      <div style="font-size: 14px; color: var(--text-muted); border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 15px; display: inline-block;">
+        Tech Stack: React, FastAPI, Vertex AI, Gemini 3.5 & 3.0
+      </div>
+    </div>
+
+    <!-- Slide 2: Block Diagram -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2>System Block Diagram</h2>
+      </div>
+      <div class="slide-grid">
+        <div class="text-column">
+          <p style="color: var(--text-main); font-weight: 500; margin-bottom: 12px;">Layered Architecture Overview:</p>
+          <ul>
+            <li><strong>Client Tier (React)</strong>: Composes inputs, custom logos, and reference creative visual files. Supports 15 aspect ratios and 4 resolution levels (up to 4K).</li>
+            <li><strong>Application Tier (FastAPI)</strong>: Routes user parameters and hosts assets helpers. Fallback servers mount compiled static assets directly on the root endpoint.</li>
+            <li><strong>GCP Tier (Vertex AI)</strong>: Integrates text orchestration (Gemini 3.5 Flash) and advanced image composition/editing (Gemini 3 Pro Image).</li>
+          </ul>
+        </div>
+        <div class="diagram-column">
+          <div class="mermaid">
+            graph TD
+                UI[React Client SPA] -->|APIs| Router[FastAPI Router]
+                Router -->|Local Assets| PIL[PIL Assets Processor]
+                Router -->|Resilient Retries| Retry[Tenacity Interceptor]
+                Retry -->|Text Models| Flash[gemini-3.5-flash]
+                Retry -->|Image Models| Imagen[gemini-3-pro-image]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: AI Campaign Builder (3-Step Flow) -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2>AI Campaign Builder (3-Step Pipeline)</h2>
+      </div>
+      <div class="slide-grid">
+        <div class="text-column">
+          <p style="color: var(--text-main); font-weight: 500; margin-bottom: 12px;">Composing Ads from Scratch:</p>
+          <ul>
+            <li><strong>Step 1: Prompts Generation</strong>: Sends input to <code>gemini-3.5-flash</code>. Returns multi-language marketing taglines, base image prompt, and Nano-Banana edit/layout prompt.</li>
+            <li><strong>Step 2: Base Image</strong>: Instructs <code>gemini-3-pro-image</code> to generate a clean, text-free, centered base product image matching resolution configurations.</li>
+            <li><strong>Step 3: Overlay Editor</strong>: Uses <code>gemini-3-pro-image</code> to overlay the brand logo, render taglines, and embed the <code>*T&Cs apply</code> legal footer.</li>
+          </ul>
+        </div>
+        <div class="diagram-column" style="max-height: 480px; overflow-y: auto;">
+          <div class="mermaid">
+            sequenceDiagram
+                autonumber
+                User->>FastAPI: POST /api/generate-prompts
+                FastAPI->>Gemini 3.5: Create taglines & prompts
+                Gemini 3.5-->>User: Prompts & Taglines
+                User->>FastAPI: POST /api/generate-base-image
+                FastAPI->>Gemini 3.0: Render raw centered image
+                Gemini 3.0-->>User: Base Image base64
+                User->>FastAPI: POST /api/edit-image
+                FastAPI->>Gemini 3.0: Composite Logo, Text & TC apply
+                Gemini 3.0-->>User: Final Creative
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Multimodal Visual Remixer -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2>Multimodal Visual Remixer (Style Cloner)</h2>
+      </div>
+      <div class="slide-grid">
+        <div class="text-column">
+          <p style="color: var(--text-main); font-weight: 500; margin-bottom: 12px;">Preserving Layout & Brand Elements:</p>
+          <ul>
+            <li>Allows users to upload an ad creative as a visual layout reference.</li>
+            <li>Users can customize prompts (e.g. "move dish to corner", "change discount text", "apply Diwali elements").</li>
+            <li>FastAPI backend sends reference creative, brand logo, and prompts to <code>gemini-3-pro-image</code>.</li>
+            <li>Preserves spacing, font sizing, and visual boundaries while swapping assets dynamically.</li>
+          </ul>
+        </div>
+        <div class="diagram-column">
+          <div class="mermaid">
+            sequenceDiagram
+                autonumber
+                User->>FastAPI: POST /api/multimodal-layout-edit (Ref image, Logo, Prompts)
+                FastAPI->>Gemini 3.0: Process Ref Creative + Logo + Edit Instruction
+                Note over Gemini 3.0: Preserves layout structure, margins, font sizes, & visual hierarchy
+                Gemini 3.0-->>User: Returns Layout Edited Image base64
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Rate-Limit Resilience (Tenacity Retries) -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2>Rate-Limit Resilience (Tenacity Retries)</h2>
+      </div>
+      <div class="slide-grid">
+        <div class="text-column">
+          <p style="color: var(--text-main); font-weight: 500; margin-bottom: 12px;">Robust Transient Error Handling:</p>
+          <ul>
+            <li>Catches API quota and concurrency errors (status code <code>429</code> or <code>RESOURCE_EXHAUSTED</code>).</li>
+            <li>Applies **Exponential Backoff** (starting at 2 seconds, backing off to a maximum of 12 seconds).</li>
+            <li>Performs up to 5 consecutive retry attempts.</li>
+            <li>Guarantees high workflow completion rates during high-traffic campaign seasons.</li>
+          </ul>
+        </div>
+        <div class="diagram-column">
+          <div class="mermaid">
+            graph TD
+                Start([Call API]) --> Success{Success?}
+                Success -- Yes --> Done([Return JSON])
+                Success -- No (429/Exhausted) --> Attempts{Attempts < 5?}
+                Attempts -- Yes --> Backoff[Exponential Backoff Wait]
+                Backoff --> Start
+                Attempts -- No --> Fail([Raise 500 Exception])
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Key Endpoint Specifications -->
+    <div class="slide">
+      <div class="slide-header">
+        <h2>Key API Specifications</h2>
+      </div>
+      <div style="width: 100%; overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Method</th>
+              <th>Input Model</th>
+              <th>Gemini Model</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/api/generate-prompts</code></td>
+              <td>POST</td>
+              <td>GeneratePromptsRequest</td>
+              <td>gemini-3.5-flash</td>
+              <td>Composes campaign copy and prompt text.</td>
+            </tr>
+            <tr>
+              <td><code>/api/generate-base-image</code></td>
+              <td>POST</td>
+              <td>GenerateBaseImageRequest</td>
+              <td>gemini-3-pro-image</td>
+              <td>Generates clean, centered raw product images.</td>
+            </tr>
+            <tr>
+              <td><code>/api/edit-image</code></td>
+              <td>POST</td>
+              <td>EditImageRequest</td>
+              <td>gemini-3-pro-image</td>
+              <td>Overlays branding, headlines, and legal disclaimers.</td>
+            </tr>
+            <tr>
+              <td><code>/api/multimodal-layout-edit</code></td>
+              <td>POST</td>
+              <td>MultimodalLayoutEditRequest</td>
+              <td>gemini-3-pro-image</td>
+              <td>Remixes templates matching visual layouts.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer Navigation -->
+  <footer>
+    <div class="slide-counter" id="slide-counter">Slide 1 of 6</div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="prev-btn" onclick="changeSlide(-1)" disabled>Previous</button>
+      <button class="nav-btn" id="next-btn" onclick="changeSlide(1)">Next</button>
+    </div>
+  </footer>
+
+  <!-- Slide Navigation JS Script -->
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const counter = document.getElementById('slide-counter');
+
+    function updateNav() {
+      // Toggle Active Slide
+      slides.forEach((slide, idx) => {
+        if (idx === currentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update Navigation Buttons Status
+      prevBtn.disabled = (currentSlide === 0);
+      nextBtn.disabled = (currentSlide === totalSlides - 1);
+
+      // Update Slide Counter text
+      counter.innerText = `Slide ${currentSlide + 1} of ${totalSlides}`;
+    }
+
+    function changeSlide(direction) {
+      const targetSlide = currentSlide + direction;
+      if (targetSlide >= 0 && targetSlide < totalSlides) {
+        currentSlide = targetSlide;
+        updateNav();
+      }
+    }
+
+    // Keyboard controls (Left / Right arrow keys)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+      } else if (e.key === 'ArrowRight') {
+        changeSlide(1);
+      }
+    });
+
+    // Initialize slide deck state
+    updateNav();
+  </script>
+</body>
+</html>

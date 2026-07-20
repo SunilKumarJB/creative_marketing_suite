@@ -1,0 +1,18 @@
+# Exclude files when submitting build source to GCP
+.git
+.gcloudignore
+.dockerignore
+.gitignore
+node_modules/
+dist/
+venv/
+.venv/
+env/
+__pycache__/
+.gemini/
+.agents/
+.DS_Store
+*.pyc
+*.pyo
+*.pyd
+*.log
