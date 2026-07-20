@@ -99,3 +99,10 @@ chmod +x deploy_cloudrun.sh
 
 
 
+<div align="center">
+
+[**Sunil Kumar**](https://www.linkedin.com/in/sunilkumar88/)
+
+<sub>A Gemini use-case demonstration. Not an official Google product.</sub>
+
+</div>
