@@ -37,37 +37,65 @@ graph TD
 
 Follow these steps to set up and run the application locally:
 
-### 1. Python Environment Setup
+### 1. Environment Configurations (.env)
+Create a `.env` configuration file in the project root to capture your target Google Cloud Project ID and Region. You can copy the template provided in `.env_example`:
+```bash
+cp .env_example .env
+```
+Edit `.env` and fill out your GCP configurations:
+```env
+GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+GOOGLE_CLOUD_REGION="global"
+```
+
+### 2. Python Environment Setup
 Create a virtual environment and install the required backend dependencies:
 ```bash
 python3 -m venv venv
-./venv/bin/pip install -r requirements.txt
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-### 2. Node.js Environment Setup
+### 3. Node.js Environment Setup
 Install the required frontend packages:
 ```bash
 npm install
 ```
 
-### 3. GCP Authentication
+### 4. GCP Authentication
 Ensure you are authenticated with Google Cloud Platform and have Application Default Credentials (ADC) set up:
 ```bash
 gcloud auth login
 gcloud auth application-default login
-gcloud config set project llm-project-52521
 ```
 
-## Quickstart
-
-Both servers are currently configured and running in the background of your workspace:
+## Quickstart & Local Dev
 
 ### 1. Python Backend
 Runs on `http://127.0.0.1:8000`
-- Command to start: `./venv/bin/uvicorn backend:app --host 127.0.0.1 --port 8000`
+- Command to start: `./venv/bin/uvicorn backend:app --host 127.0.0.1 --port 8000 --reload`
 
 ### 2. Frontend Development Server
 Runs on `http://localhost:5173`
 - Command to start: `npm run dev`
+
+---
+
+## Deploying to Google Cloud Run
+
+To build and deploy the container monolith to Google Cloud Run, execute the deployment script. The script automatically reads your GCP configurations from the `.env` file:
+
+```bash
+chmod +x deploy_cloudrun.sh
+./deploy_cloudrun.sh
+```
+
+### What the script does:
+1. Loads `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_REGION` configurations from `.env` (falls back to active `gcloud config` values if empty).
+2. Enables necessary APIs (`Artifact Registry`, `Cloud Run`, `Cloud Build`, `Vertex AI`).
+3. Creates a Docker registry repository in your target region if not already present.
+4. Builds the container image using GCB (Google Cloud Build).
+5. Deploys the service monolith to Google Cloud Run, returning a public URL for your web app.
+
 
 
